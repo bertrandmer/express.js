@@ -1,52 +1,63 @@
-const mysql = require("mysql");
-const employees = require("../queries/employees");
+import express from "express";
 
-const mysqlConfig = {
-    host : "localhost",
-    user: "root",
-    password: "password",
-    database: "bestbuy",
-};
+const Router = express.Router();
 
-const Connection = mysql.createPool(mysqlConfig);
+router.get("/api/employees", (req, res, next) => {
+    try {
+      res.json("Employees");
+    } catch (err) {
+      next(err);
+    }
+  });
+  
+  router.get("/api/employees/:id", (req, res, next) => {
+    try {
+      res.json("Employee " + id);
+    } catch (err) {
+      next(err);
+    }
+  });
+  const { allEmployees, oneEmployee } = require("../db/queries/employees");
 
-const Query = (query,values) => {
-    return new Promise((resolve, reject) => {
-        Connection.query(query, values, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
+  router.get("/api/employees", async (req, res, next) => {
+    try {
+      let data = await allEmployees();
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
+  });
+  
+  router.get("/api/employees/:id", (req, res, next) => {
+    try {
+      let { id } = req.params;
+      let data = await oneEmployees(id);
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
+  });
 
-};
+  router.get("/api/employees/add", (req, res, next) => {
+    try {
+        res.json("Employee " + add);
+      } catch (err) {
+        next(err);
+      }
+  });
 
-export default { Query, employees };
-import{ Query } from "../models";
+  router.get("/api/employees/update", (req, res, next) => {
+    try {
+        res.json("Employee " + update);
+      } catch (err) {
+        next(err);
+      }
+  });
 
-const allEmployees = async () => {
-    return Query ("SELECT EmployeeID, FirstName, LastName, Title FROM employees");
-}
-const oneEmployees = async (id) => {
-    return Query ("SELECT EmployeeID, FirstName, LastName, Title FROM employees", [
-        id,
-    ]);
-};
-const addEmployees = async (body) => {
-  return Query("INSERT INTO employees SET ?", [body]);  
-};
-const updateEmployees = async (body, id) => {
-    return Query("UPDATE employees SET ? WHERE EmployeeID = ?", [body, id]);
-};
-
-const removeEmployees = async (id) => {
-    return Query("DELETE FROM employees WHERE EmployeeID = ?", [id]);
-};
-
-export default {
-    allEmployees,
-    oneEmployee,
-    addEmployee,
-    updateEmployee,
-    removeEmployee, 
-
-};
+  router.get("/api/employees/remove", (req, res, next) => {
+    try {
+        res.json("Employee " + remove);
+      } catch (err) {
+        next(err);
+      }
+  });
